@@ -82,9 +82,15 @@ jest.mock('@react-three/fiber', () => ({
       domElement: document.createElement('canvas')
     }
   })),
-  Canvas: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="mock-canvas">{children}</div>
-  )
+  Canvas: ({ children }: { children: React.ReactNode }) => {
+    return {
+      type: 'div',
+      props: {
+        'data-testid': 'mock-canvas',
+        children
+      }
+    };
+  }
 }));
 
 // Mock @react-three/drei
