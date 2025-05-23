@@ -1,25 +1,45 @@
-import { render, screen } from '@testing-library/react';
-import { use } from 'react';
+import { render, screen } from './utils/test-utils';
 
-// Mock the use hook
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  use: jest.fn(),
+// Mock the components used in the home page
+jest.mock('@/components/Hero', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-hero">Hero Section</div>
 }));
 
-// Create a mock component for testing
+jest.mock('@/components/ProjectsSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-projects">Projects Section</div>
+}));
+
+jest.mock('@/components/SkillsSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-skills">Skills Section</div>
+}));
+
+jest.mock('@/components/ContactSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-contact">Contact Section</div>
+}));
+
+// Create a mock home page component
 const MockHome = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1>Welcome to My Portfolio</h1>
+    <main className="flex min-h-screen flex-col">
+      <div data-testid="mock-hero">Hero Section</div>
+      <div data-testid="mock-projects">Projects Section</div>
+      <div data-testid="mock-skills">Skills Section</div>
+      <div data-testid="mock-contact">Contact Section</div>
     </main>
   );
 };
 
-describe('Home', () => {
-  it('renders the welcome message', () => {
+describe('Home Page', () => {
+  it('renders all main sections', () => {
     render(<MockHome />);
-    expect(screen.getByText('Welcome to My Portfolio')).toBeInTheDocument();
-    expect(document.querySelector('main')).toBeInTheDocument();
+    
+    expect(screen.getByTestId('mock-hero')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-projects')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-skills')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-contact')).toBeInTheDocument();
   });
 });

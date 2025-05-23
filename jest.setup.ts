@@ -39,12 +39,63 @@ jest.mock('next/image', () => ({
   },
 }));
 
-// Mock Three.js
+// Mock Three.js and related modules
 jest.mock('three', () => ({
   Scene: jest.fn(),
   PerspectiveCamera: jest.fn(),
-  WebGLRenderer: jest.fn(),
-  // Add other Three.js mocks as needed
+  WebGLRenderer: jest.fn(() => ({
+    setSize: jest.fn(),
+    render: jest.fn(),
+    dispose: jest.fn(),
+    shadowMap: {},
+    domElement: document.createElement('canvas')
+  })),
+  Vector2: jest.fn(() => ({
+    x: 0,
+    y: 0,
+    set: jest.fn()
+  })),
+  Vector3: jest.fn(() => ({
+    x: 0,
+    y: 0,
+    z: 0,
+    set: jest.fn()
+  })),
+  Mesh: jest.fn(),
+  Color: jest.fn(),
+  MeshStandardMaterial: jest.fn(),
+  BoxGeometry: jest.fn(),
+  Group: jest.fn(() => ({
+    add: jest.fn(),
+    remove: jest.fn(),
+    children: []
+  }))
+}));
+
+// Mock @react-three/fiber
+jest.mock('@react-three/fiber', () => ({
+  useFrame: jest.fn(),
+  useThree: jest.fn(() => ({
+    scene: {},
+    camera: {},
+    gl: {
+      domElement: document.createElement('canvas')
+    }
+  })),
+  Canvas: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="mock-canvas">{children}</div>
+  )
+}));
+
+// Mock @react-three/drei
+jest.mock('@react-three/drei', () => ({
+  OrbitControls: jest.fn(() => null),
+  PerspectiveCamera: jest.fn(() => null),
+  useGLTF: jest.fn(() => ({
+    scene: {},
+    nodes: {},
+    materials: {}
+  }))
 }));
 
 // Suppress console errors during tests

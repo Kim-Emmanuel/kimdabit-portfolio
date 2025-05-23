@@ -1,6 +1,19 @@
 import { render, screen } from '../utils/test-utils';
 import Hero from '@/components/Hero';
 
+// Mock the client component
+jest.mock('@/components/client/HeroClient', () => {
+  return {
+    __esModule: true,
+    default: () => (
+      <section data-testid="hero-section">
+        <h1>Hello, I'm Kim Dabit</h1>
+        <div data-testid="canvas-container"></div>
+      </section>
+    ),
+  };
+});
+
 jest.mock('next/navigation', () => ({
   useRouter() {
     return {

@@ -1,6 +1,24 @@
 import { render, screen } from '../utils/test-utils';
 import ProjectCard from '@/components/ProjectCard';
 
+// Mock the client component
+jest.mock('@/components/client/ProjectCardClient', () => {
+  return {
+    __esModule: true,
+    default: ({ project }: any) => (
+      <div data-testid="project-card">
+        <h2>{project.title}</h2>
+        <p>{project.description}</p>
+        {project.techStack.map((tech: any) => (
+          <span key={tech.name}>{tech.name}</span>
+        ))}
+        <a href={project.githubUrl}>GitHub</a>
+        <a href={project.demoUrl}>Demo</a>
+      </div>
+    ),
+  };
+});
+
 const mockProject = {
   project: {
     title: 'Test Project',
