@@ -85,4 +85,67 @@ describe('ProjectCard Component', () => {
     expect(links[0]).toHaveAttribute('href', mockProject.project.githubUrl);
     expect(links[1]).toHaveAttribute('href', mockProject.project.demoUrl);
   });
+
+  it('renders performance metrics correctly', () => {
+    render(<ProjectCard {...mockProject} />);
+    
+    const { performanceMetrics } = mockProject.project;
+    const score = screen.getByText(`${performanceMetrics.lighthouseScore}/100`);
+    expect(score).toBeInTheDocument();
+  });
+
+  it('handles missing tech stack gracefully', () => {
+    const projectWithoutTech = {
+      project: {
+        ...mockProject.project,
+        techStack: []
+      }
+    };
+    
+    render(<ProjectCard {...projectWithoutTech} />);
+    // Should not throw and render basic project info
+    expect(screen.getByText(mockProject.project.title)).toBeInTheDocument();
+  });
+
+  it('handles missing links gracefully', () => {
+    const projectWithoutLinks = {
+      project: {
+        ...mockProject.project,
+        githubUrl: '',
+        demoUrl: ''
+      }
+    };
+    
+    render(<ProjectCard {...projectWithoutLinks} />);
+    const links = screen.queryAllByRole('link');
+    expect(links).toHaveLength(0);
+  });
+
+  it('renders project with minimal required props', () => {
+    const minimalProject = {
+      project: {
+        title: 'Minimal Project',
+        description: 'Basic description',
+        techStack: [],
+        image: {
+          _type: 'image',
+          asset: {
+            _ref: 'minimal-image-ref',
+            _type: 'reference'
+          }
+        },
+        githubUrl: '',
+        demoUrl: '',
+        performanceMetrics: {
+          loadTime: 0,
+          lighthouseScore: 0,
+          firstContentfulPaint: 0
+        }
+      }
+    };
+    
+    render(<ProjectCard {...minimalProject} />);
+    expect(screen.getByText('Minimal Project')).toBeInTheDocument();
+    expect(screen.getByText('Basic description')).toBeInTheDocument();
+  });
 });

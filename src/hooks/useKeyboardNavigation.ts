@@ -3,11 +3,14 @@ import { useEffect } from 'react'
 interface KeyboardNavigationProps {
   selector: string
   onActivate?: (element: HTMLElement) => void
-  deps?: readonly any[]
+  deps?: readonly unknown[]
 }
 
 export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: KeyboardNavigationProps) => {
+  // Store the selector and onActivate in refs if they change frequently
   useEffect(() => {
+    // Skip setup if no selector is provided
+    if (!selector) return
     const elements = document.querySelectorAll<HTMLElement>(selector)
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement
@@ -68,5 +71,5 @@ export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: Keybo
         element.removeEventListener('keydown', handleKeyDown)
       })
     }
-  }, deps ? [selector, onActivate, ...deps] : [selector, onActivate])
+  }, [selector, onActivate, ...deps])
 }
