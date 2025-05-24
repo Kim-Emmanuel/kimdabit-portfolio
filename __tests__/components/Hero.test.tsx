@@ -7,7 +7,7 @@ jest.mock('@/components/client/HeroClient', () => {
     __esModule: true,
     default: () => (
       <section data-testid="hero-section">
-        <h1>Hello, I'm Kim Dabit</h1>
+        <h1>Hello, I&apos;m Kim Dabit</h1>
         <div data-testid="canvas-container"></div>
       </section>
     ),

@@ -7,9 +7,9 @@ interface KeyboardNavigationProps {
 }
 
 export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: KeyboardNavigationProps) => {
-  // Store the selector and onActivate in refs if they change frequently
+  // Using the spread operator in deps array is discouraged, so we'll handle it differently
   useEffect(() => {
-    // Skip setup if no selector is provided
+    // Validate inputs
     if (!selector) return
     const elements = document.querySelectorAll<HTMLElement>(selector)
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -71,5 +71,5 @@ export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: Keybo
         element.removeEventListener('keydown', handleKeyDown)
       })
     }
-  }, [selector, onActivate, ...deps])
+  }, deps)
 }
