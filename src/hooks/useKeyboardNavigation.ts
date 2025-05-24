@@ -1,9 +1,9 @@
-import { useEffect, type DependencyList } from 'react'
+import { useEffect } from 'react'
 
 interface KeyboardNavigationProps {
   selector: string
   onActivate?: (element: HTMLElement) => void
-  deps?: React.DependencyList
+  deps?: readonly any[]
 }
 
 export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: KeyboardNavigationProps) => {

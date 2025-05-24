@@ -34,8 +34,8 @@ function ParticleField({
     return [position, target, color]
   }, [count])
   
-  const color1 = new THREE.Color(color)
-  const color2 = new THREE.Color('#EC4899') // Accent color
+  const color1 = useMemo(() => new THREE.Color(color), [color])
+  const color2 = useMemo(() => new THREE.Color('#EC4899'), [])
   
   // Initialize particle positions and colors
   useEffect(() => {
@@ -69,8 +69,9 @@ function ParticleField({
 
     // Cleanup function
     return () => {
-      if (points.current?.geometry) {
-        points.current.geometry.dispose()
+      const geometry = points.current?.geometry
+      if (geometry) {
+        geometry.dispose()
       }
     }
   }, [count, color1, color2, particlesPosition, particlesTarget, particlesColor])

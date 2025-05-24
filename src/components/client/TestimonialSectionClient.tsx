@@ -48,10 +48,11 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
   const springX = useSpring(x, springConfig)
 
   // Calculate slider width based on testimonials
-  const sliderWidth = testimonials.length * SLIDE_FULL_WIDTH
+  const isValidTestimonials = Array.isArray(testimonials) && testimonials.length > 0
+  const sliderWidth = isValidTestimonials ? testimonials.length * SLIDE_FULL_WIDTH : 0
 
-  // Ensure testimonials is valid and not empty
-  if (!Array.isArray(testimonials) || testimonials.length === 0) {
+  // Early return component for empty state
+  if (!isValidTestimonials) {
     return (
       <div className="text-center text-white/70 py-8">
         No testimonials available at the moment.
