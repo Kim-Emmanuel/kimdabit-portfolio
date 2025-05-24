@@ -34,7 +34,7 @@
 // ]
 
 // const AboutSection = () => {
-//   const { isReducedMotion } = useA11y()
+//   const { reduceMotion } = useA11y()
 //   const containerRef = useRef<HTMLDivElement>(null)
 //   const bioRef = useRef<HTMLDivElement>(null)
 //   const [activeSection, setActiveSection] = useState(0)
@@ -47,7 +47,7 @@
 //   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0])
 
 //   useEffect(() => {
-//     if (!containerRef.current || isReducedMotion) return
+//     if (!containerRef.current || reduceMotion) return
 
 //     const ctx = gsap.context(() => {
 //       ScrollTrigger.create({
@@ -66,7 +66,7 @@
 //     })
 
 //     return () => ctx.revert()
-//   }, [isReducedMotion])
+//   }, [reduceMotion])
 
 //   return (
 //     <div className="min-h-screen py-20 bg-primary" ref={containerRef}>
