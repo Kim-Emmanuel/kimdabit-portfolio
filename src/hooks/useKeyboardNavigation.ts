@@ -68,5 +68,5 @@ export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: Keybo
         element.removeEventListener('keydown', handleKeyDown)
       })
     }
-  }, [selector, onActivate, ...(deps || [])])
+  }, deps ? [selector, onActivate, ...deps] : [selector, onActivate])
 }

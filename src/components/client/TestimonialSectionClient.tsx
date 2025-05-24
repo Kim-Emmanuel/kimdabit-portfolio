@@ -51,24 +51,17 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
   const isValidTestimonials = Array.isArray(testimonials) && testimonials.length > 0
   const sliderWidth = isValidTestimonials ? testimonials.length * SLIDE_FULL_WIDTH : 0
 
-  // Early return component for empty state
-  if (!isValidTestimonials) {
-    return (
-      <div className="text-center text-white/70 py-8">
-        No testimonials available at the moment.
-      </div>
-    )
-  }
-
+  // Initialize drag functionality
   useEffect(() => {
-    if (!sliderRef.current) return
+    if (!sliderRef.current || !isValidTestimonials) return
 
     // Initialize GSAP Draggable
     const draggable = Draggable.create(sliderRef.current, {
       type: 'x',
-      inertia: true,        bounds: {
-          minX: -sliderWidth + SLIDE_WIDTH,
-          maxX: 0
+      inertia: true,
+      bounds: {
+        minX: -sliderWidth + SLIDE_WIDTH,
+        maxX: 0
       },
       onDragStart: () => {
         setAutoPlayEnabled(false)
@@ -92,11 +85,11 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
     return () => {
       draggable.kill()
     }
-  }, [sliderWidth])
+  }, [sliderWidth, isValidTestimonials])
 
   // Auto-play functionality
   useEffect(() => {
-    if (!autoPlayEnabled) return
+    if (!autoPlayEnabled || !isValidTestimonials) return
     
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % testimonials.length
@@ -112,7 +105,18 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [currentIndex, autoPlayEnabled, testimonials.length])
+  }, [currentIndex, autoPlayEnabled, testimonials.length, isValidTestimonials])
+
+  // Early return component for empty state
+  if (!isValidTestimonials) {
+    return (
+      <div className="text-center text-white/70 py-8">
+        No testimonials available at the moment.
+      </div>
+    )
+  }
+
+  // Auto-play functionality handled in the previous useEffect
 
   return (
     <div className="relative overflow-hidden" data-testid="testimonial-slider">

@@ -2,14 +2,36 @@ import { render, screen } from '../utils/test-utils';
 import ProjectCard from '@/components/ProjectCard';
 
 // Mock the client component
+interface ProjectCardProps {
+  project: {
+    title: string
+    description: string
+    image: {
+      _type: string
+      asset: {
+        _ref: string
+        _type: string
+      }
+    }
+    techStack: Array<{ name: string }>
+    demoUrl: string
+    githubUrl: string
+    performanceMetrics: {
+      loadTime: number
+      lighthouseScore: number
+      firstContentfulPaint: number
+    }
+  }
+}
+
 jest.mock('@/components/client/ProjectCardClient', () => {
   return {
     __esModule: true,
-    default: ({ project }: any) => (
+    default: ({ project }: ProjectCardProps) => (
       <div data-testid="project-card">
         <h2>{project.title}</h2>
         <p>{project.description}</p>
-        {project.techStack.map((tech: any) => (
+        {project.techStack.map((tech) => (
           <span key={tech.name}>{tech.name}</span>
         ))}
         <a href={project.githubUrl}>GitHub</a>
@@ -27,7 +49,13 @@ const mockProject = {
       { name: 'React' },
       { name: 'TypeScript' }
     ],
-    image: '/test-image.jpg',
+    image: {
+      _type: 'image',
+      asset: {
+        _ref: 'image-test-reference',
+        _type: 'reference'
+      }
+    },
     githubUrl: 'https://github.com/test/project',
     demoUrl: 'https://test-project.com',
     performanceMetrics: {
