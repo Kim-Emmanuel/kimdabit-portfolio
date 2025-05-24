@@ -26,8 +26,8 @@ const SkillsRadar = ({ skills, width = 500, height = 500 }: SkillsRadarProps) =>
     const margin = 50
     const radius = Math.min(width, height) / 2 - margin
 
-    const svg = d3.select(svgRef.current)
-      .append('g')
+    const svg = d3.select<SVGGElement, unknown>(svgRef.current)
+      .append<SVGGElement>('g')
       .attr('transform', `translate(${width/2},${height/2})`)
 
     // Scale for the radar
@@ -71,7 +71,7 @@ const SkillsRadar = ({ skills, width = 500, height = 500 }: SkillsRadarProps) =>
       .radius(d => radiusScale(d.value))
       .curve(d3.curveLinearClosed)
 
-    const path = svg.append('path')
+    svg.append('path')
       .datum(skills)
       .attr('d', line)
       .attr('class', 'fill-secondary/20 stroke-secondary stroke-2')
@@ -112,9 +112,12 @@ const SkillsRadar = ({ skills, width = 500, height = 500 }: SkillsRadarProps) =>
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
       className="w-full max-w-2xl mx-auto"
+      style={{ willChange: 'transform, opacity' }}
     >
       <svg
         ref={svgRef}
+        role="img"
+        aria-label="Skills radar chart"
         width={width}
         height={height}
         className="w-full h-full"

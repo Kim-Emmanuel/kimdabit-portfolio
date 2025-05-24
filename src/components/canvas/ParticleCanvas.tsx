@@ -210,6 +210,16 @@ const ParticleCanvas = ({
     )
   }, [])
 
+  // Get optimized Three.js configuration
+  const threeJSConfig = useMemo(() => {
+    const config = optimizePerformance()?.threeJSConfig
+    return {
+      antialias: config?.antialias ?? true,
+      alpha: config?.alpha ?? true,
+      powerPreference: (config?.powerPreference ?? 'high-performance') as WebGLPowerPreference
+    }
+  }, [])
+
   // Adjust particle count based on device capabilities
   const optimizedCount = useMemo(() => {
     return isLowPerformance ? Math.floor(particleCount / 2) : particleCount
@@ -222,11 +232,7 @@ const ParticleCanvas = ({
           camera={{ position: [0, 0, 5], fov: 60 }}
           dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, isLowPerformance ? 1 : 2) : 1}
           performance={{ min: 0.5 }}
-          gl={{
-            antialias: true,
-            alpha: true,
-            powerPreference: 'high-performance' as WebGLPowerPreference
-          }}
+          gl={threeJSConfig}
         >
           <ambientLight intensity={0.5} />
           <Suspense fallback={null}>

@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, useAnimation } from 'framer-motion'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
 import SkillsRadar from '../SkillsRadar'
 import { client } from '@/utils/sanity'
 import imageUrlBuilder from '@sanity/image-url'
@@ -15,7 +16,13 @@ interface Skill {
   category: string
   proficiency: number
   yearsOfExperience: number
-  icon: any
+  icon: {
+    _type: string
+    asset: {
+      _ref: string
+      _type: string
+    }
+  } | string
   iconUrl: string
 }
 
@@ -42,7 +49,6 @@ const getIconUrl = (skill: Skill) => {
 const SkillsSectionClient = () => {
   const [skills, setSkills] = useState<Skill[]>([])
   const [activeCategory, setActiveCategory] = useState('all')
-  const controls = useAnimation()
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -159,13 +165,14 @@ const SkillsSectionClient = () => {
                       const iconUrl = getIconUrl(skill)
                       return iconUrl ? (
                         <div className="w-8 h-8 flex items-center justify-center">
-                          <img 
+                          <Image 
                             src={iconUrl} 
                             alt={`${skill.name} icon`}
-                            className="w-6 h-6 object-contain"
-                            onError={(e) => {
+                            width={24}
+                            height={24}
+                            className="object-contain"
+                            onError={() => {
                               console.log(`Failed to load icon for ${skill.name}:`, iconUrl)
-                              e.currentTarget.style.display = 'none'
                             }}
                           />
                         </div>

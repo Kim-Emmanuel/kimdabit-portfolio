@@ -9,7 +9,13 @@ interface Project {
   _id: string
   title: string
   description: string
-  image: any
+  image: {
+    _type: string
+    asset: {
+      _ref: string
+      _type: string
+    }
+  }
   techStack: Array<{ name: string }>
   demoUrl: string
   githubUrl: string

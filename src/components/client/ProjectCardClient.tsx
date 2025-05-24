@@ -8,12 +8,30 @@ import { useGLTF, Environment, PresentationControls } from '@react-three/drei'
 import { textScrambleEffect } from '@/utils/animations'
 import { urlFor } from '@/utils/sanity'
 import Schema from '../Schema'
+import { Object3D, Material, Texture } from 'three'
+
+interface ModelNode extends Object3D {
+  material: Material & {
+    map?: Texture
+  }
+}
+
+interface ModelNodes {
+  Plane: ModelNode
+  [key: string]: ModelNode
+}
 
 interface ProjectCardProps {
   project: {
     title: string
     description: string
-    image: any
+    image: {
+      _type: string
+      asset: {
+        _ref: string
+        _type: string
+      }
+    }
     modelUrl?: string  // Optional 3D model URL
     techStack: Array<{ name: string }> | null
     demoUrl: string
@@ -31,7 +49,7 @@ const ProjectPreview = ({ url }: { url: string }) => {
   const [error, setError] = useState(false)
   
   // Try to load the GLTF model with proper error handling
-  const { nodes, materials } = useGLTF(url)
+  const { nodes } = useGLTF(url) as unknown as { nodes: ModelNodes }
 
   useEffect(() => {
     const validateModel = async () => {
@@ -41,7 +59,7 @@ const ProjectPreview = ({ url }: { url: string }) => {
         }
 
         // Verify we have the required components
-        const plane = nodes.Plane as any
+        const plane = nodes.Plane as ModelNode
         if (!plane || !plane.material?.map) {
           throw new Error('Model is missing required components')
         }
@@ -101,7 +119,7 @@ const ProjectPreview = ({ url }: { url: string }) => {
           <mesh>
             <planeGeometry args={[1, 1]} />
             <meshStandardMaterial
-              {...(nodes?.Plane as any)?.material}
+              {...(nodes?.Plane as ModelNode)?.material}
               metalness={0.1}
               roughness={0.8}
             />

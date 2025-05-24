@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
-import { motion, useMotionValue, useTransform, useSpring, useAnimationControls } from 'framer-motion'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { gsap } from 'gsap'
 import { Draggable } from 'gsap/Draggable'
 import { urlFor } from '@/utils/sanity'
@@ -17,7 +17,13 @@ interface Testimonial {
   name: string
   role: string
   company: string
-  image: any
+  image: {
+    _type: string
+    asset: {
+      _ref: string
+      _type: string
+    }
+  }
   testimonial: string
 }
 
@@ -25,12 +31,24 @@ interface TestimonialSectionClientProps {
   testimonials: Testimonial[]
 }
 
+// Slider configuration
+const SLIDE_WIDTH = 400
+const SLIDE_GAP = 24
+const SLIDE_FULL_WIDTH = SLIDE_WIDTH + SLIDE_GAP
+
 const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [autoPlayEnabled, setAutoPlayEnabled] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const controls = useAnimationControls()
+
+  // Motion values for smooth animation
+  const x = useMotionValue(0)
+  const springConfig = { damping: 30, stiffness: 300 }
+  const springX = useSpring(x, springConfig)
+
+  // Calculate slider width based on testimonials
+  const sliderWidth = testimonials.length * SLIDE_FULL_WIDTH
 
   // Ensure testimonials is valid and not empty
   if (!Array.isArray(testimonials) || testimonials.length === 0) {
@@ -41,27 +59,15 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
     )
   }
 
-  // Slider configuration
-  const slideWidth = 400
-  const slideGap = 24
-  const slideFullWidth = slideWidth + slideGap
-  const sliderWidth = testimonials.length * slideFullWidth
-
-  // Motion values for smooth animation
-  const x = useMotionValue(0)
-  const springConfig = { damping: 30, stiffness: 300 }
-  const springX = useSpring(x, springConfig)
-
   useEffect(() => {
     if (!sliderRef.current) return
 
     // Initialize GSAP Draggable
     const draggable = Draggable.create(sliderRef.current, {
       type: 'x',
-      inertia: true,
-      bounds: {
-        minX: -sliderWidth + slideWidth,
-        maxX: 0
+      inertia: true,        bounds: {
+          minX: -sliderWidth + SLIDE_WIDTH,
+          maxX: 0
       },
       onDragStart: () => {
         setAutoPlayEnabled(false)
@@ -69,8 +75,8 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
       onDragEnd: function() {
         // Snap to nearest slide
         const currentX = this.x
-        const nearestSlide = Math.round(Math.abs(currentX) / slideFullWidth)
-        const targetX = -nearestSlide * slideFullWidth
+        const nearestSlide = Math.round(Math.abs(currentX) / SLIDE_FULL_WIDTH)
+        const targetX = -nearestSlide * SLIDE_FULL_WIDTH
         
         gsap.to(sliderRef.current, {
           x: targetX,
@@ -85,7 +91,7 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
     return () => {
       draggable.kill()
     }
-  }, [sliderWidth, slideFullWidth])
+  }, [sliderWidth])
 
   // Auto-play functionality
   useEffect(() => {
@@ -93,7 +99,7 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
     
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % testimonials.length
-      const targetX = -nextIndex * slideFullWidth
+      const targetX = -nextIndex * SLIDE_FULL_WIDTH
       
       gsap.to(sliderRef.current, {
         x: targetX,
@@ -105,7 +111,7 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [currentIndex, autoPlayEnabled, testimonials.length, slideFullWidth])
+  }, [currentIndex, autoPlayEnabled, testimonials.length])
 
   return (
     <div className="relative overflow-hidden" data-testid="testimonial-slider">
@@ -116,7 +122,7 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
         style={{ x: springX }}
         drag="x"
         dragConstraints={{
-          left: -sliderWidth + slideWidth,
+          left: -sliderWidth + SLIDE_WIDTH,
           right: 0
         }}
       >
@@ -188,7 +194,7 @@ const TestimonialSlider = ({ testimonials }: { testimonials: Testimonial[] }) =>
               key={key}
               onClick={() => {
                 setAutoPlayEnabled(false)
-                const targetX = -index * slideFullWidth
+                const targetX = -index * SLIDE_FULL_WIDTH
                 
                 gsap.to(sliderRef.current, {
                   x: targetX,

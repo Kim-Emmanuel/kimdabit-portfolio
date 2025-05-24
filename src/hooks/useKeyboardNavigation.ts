@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, type DependencyList } from 'react'
 
 interface KeyboardNavigationProps {
   selector: string
   onActivate?: (element: HTMLElement) => void
-  deps?: any[]
+  deps?: React.DependencyList
 }
 
 export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: KeyboardNavigationProps) => {
@@ -68,5 +68,5 @@ export const useKeyboardNavigation = ({ selector, onActivate, deps = [] }: Keybo
         element.removeEventListener('keydown', handleKeyDown)
       })
     }
-  }, deps)
+  }, [selector, onActivate, ...(deps || [])])
 }
